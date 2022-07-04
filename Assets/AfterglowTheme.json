@@ -1,0 +1,19 @@
+{
+  "Black": "#151515",
+  "Blue": "#6c99ba",
+  "BrightBlack": "#505050",
+  "BrightBlue": "#6c99ba",
+  "BrightCyan": "#7dd5cf",
+  "BrightGreen": "#7e8d50",
+  "BrightMagenta": "#9e4e85",
+  "BrightRed": "#ac4142",
+  "BrightWhite": "#f5f5f5",
+  "BrightYellow": "#e5b566",
+  "Cyan": "#7dd5cf",
+  "Green": "#7e8d50",
+  "Magenta": "#9e4e85",
+  "Red": "#ac4142",
+  "White": "#d0d0d0",
+  "Yellow": "#e5b566",
+  "Background": "#202020"
+}
