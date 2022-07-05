@@ -26,6 +26,4 @@ public static class ColorEx
 
         return new Color(r, g, b, byte.MaxValue);
     }
-    
-    public static Color DARKESTGRAY = new Color(32, 32, 32, (int)byte.MaxValue);
 }
