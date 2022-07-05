@@ -5,7 +5,7 @@ using Roguelike.Extensions;
 
 namespace Roguelike.Utility;
 
-#pragma warning disable IL2026
+//#pragma warning disable IL2026
 
 public class ColorPalette
 {
@@ -15,7 +15,7 @@ public class ColorPalette
     
     public static ColorPalette LoadFromJson(string assetPath)
     {
-        var path = Engine.GetAssetPath(assetPath);
+        var path = AssetManager.GetPath(assetPath);
         var jsonString = File.ReadAllText(path);
         
         var options = new JsonSerializerOptions();

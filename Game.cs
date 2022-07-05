@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Raylib_cs;
 using Roguelike.Utility;
 using static Raylib_cs.Raylib;
@@ -12,36 +13,42 @@ internal class Game
 
     private readonly Tileset _tileset;
     private readonly ColorPalette _palette;
-
-    private Vector2 _playerPosition;
-
+    
     private const float PlayerWalkSpeed = 4f; // in tiles per second
     private double _playerLastMove;
+
+    private readonly Entity player;
+    private readonly List<Entity> entities = new();
     
     private Game()
     {
-        _tileset = new Tileset(LoadTexture(Engine.GetAssetPath("16x16-RogueYun-AgmEdit.png")), TileSize);
+        _tileset = new Tileset(AssetManager.LoadTexture("16x16-RogueYun-AgmEdit.png"), TileSize);
         _palette = ColorPalette.LoadFromJson("AfterglowTheme.json");
+
+        player = new Entity(15, 20, '@', _palette["Yellow"]);
+        entities.Add(player);
+        entities.Add(new Entity(20, 20, '@', _palette["White"]));
     }
 
     private void Update()
     {
         if (_playerLastMove + (1f/PlayerWalkSpeed) < GetTime())
         {
-            var playerMove = new Vector2();
+            var dx = 0;
+            var dy = 0;
             
             if (IsKeyDown(KeyboardKey.KEY_LEFT) || IsKeyDown(KeyboardKey.KEY_A))
-                playerMove.X = -1;
+                dx = -1;
             if (IsKeyDown(KeyboardKey.KEY_RIGHT) || IsKeyDown(KeyboardKey.KEY_D))
-                playerMove.X = 1;
+                dx = 1;
             if (IsKeyDown(KeyboardKey.KEY_UP) || IsKeyDown(KeyboardKey.KEY_W))
-                playerMove.Y = -1;
+                dy = -1;
             if (IsKeyDown(KeyboardKey.KEY_DOWN) || IsKeyDown(KeyboardKey.KEY_S))
-                playerMove.Y = 1;
+                dy = 1;
 
-            if (playerMove.X != 0 || playerMove.Y != 0)
+            if (dx != 0 || dy != 0)
             {
-                _playerPosition += new Vector2(playerMove.X * TileSize.X, playerMove.Y * TileSize.Y);
+                player.Move(dx, dy);
                 _playerLastMove = GetTime();
             }
         }
@@ -52,7 +59,10 @@ internal class Game
 
     private void Draw()
     {
-        DrawTextureRec(_tileset.Texture,  _tileset.GetRect(0, 4), _playerPosition, _palette["Yellow"]);
+        foreach (var entity in entities)
+        {
+            DrawTextureRec(_tileset.Texture,  _tileset.GetRect(entity.Symbol), new Vector2(entity.X, entity.Y) * TileSize, entity.Color);
+        }
     }
     
     private static void Main()
@@ -60,18 +70,23 @@ internal class Game
         var title = "Roguelike";
         var version = Assembly.GetEntryAssembly()?.GetName().Version;
         title = version == null ? title : $"{title} v{version.ToString(3)}";
+        
+        TraceLog(TraceLogLevel.LOG_INFO, "Starting Roguelike");
 
         InitWindow(800, 640, title);
-
-        var iconImg = LoadImage(Engine.GetAssetPath("icon.png"));
+        
+        var iconImg = AssetManager.LoadImage("icon.png");
         
         SetWindowIcon(iconImg);
         
         SetTargetFPS(60);
+        SetExitKey(KeyboardKey.KEY_NULL);
+        
+        var running = true;
         
         var game = new Game();
         
-        while (!WindowShouldClose())
+        while (running)
         {
             game.Update();
             
@@ -79,6 +94,8 @@ internal class Game
             ClearBackground(game._palette["Background"]);
             game.Draw();
             EndDrawing();
+            
+            running = !IsKeyPressed(KeyboardKey.KEY_ESCAPE) && !WindowShouldClose();
         }
         
         CloseWindow();

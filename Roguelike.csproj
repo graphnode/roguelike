@@ -5,9 +5,18 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Configurations>Release;Debug</Configurations>
+        <Platforms>x64</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <PropertyGroup>
+        <Company>Graphnode</Company>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(BuildType)' == 'publish'">
         <SelfContained>true</SelfContained>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <PublishTrimmed>true</PublishTrimmed>
@@ -16,17 +25,6 @@
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <Company>Graphnode</Company>
-        <NeutralLanguage>en-US</NeutralLanguage>
-        <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)'=='Release'">
-        <DebugSymbols>False</DebugSymbols>
-        <DebugType>None</DebugType>
-    </PropertyGroup>
-    
     <ItemGroup>
         <Content Include="Assets\**\*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
