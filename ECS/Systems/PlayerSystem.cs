@@ -4,19 +4,15 @@ using static Raylib_cs.Raylib;
 
 namespace Roguelike.ECS.Systems;
 
-public class PlayerSystem : ISystem
+public class PlayerSystem : System<Position, PlayerController>
 {
-    public void Process(Entity e)
+    public override void Process(Entity e)
     {
-        var position = e.Get<Position>();
-        var playerController = e.Get<PlayerController>();
-        
-        if (position == null || playerController == null)
-            return;
+        var playerController = e.Get<PlayerController>()!;
         
         if (!(playerController.LastMoveTime + (1f / playerController.Speed) < GetTime()))
             return;
-        
+
         var dx = 0;
         var dy = 0;
             
@@ -31,6 +27,8 @@ public class PlayerSystem : ISystem
 
         if (dx == 0 && dy == 0)
             return;
+        
+        var position = e.Get<Position>()!;
 
         position.X += dx;
         position.Y += dy;

@@ -2,5 +2,5 @@
 
 public interface ISystem
 {
-    public void Process(Entity e);
+    public void ProcessEntities(IEnumerable<Entity> entities);
 }

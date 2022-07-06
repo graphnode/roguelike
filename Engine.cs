@@ -10,33 +10,36 @@ using static Raylib_cs.Raylib;
 namespace Roguelike;
 
 public class Engine
-{
-    private readonly List<ISystem> systems = new();
-    private readonly HashSet<Entity> entities = new();
-    
+{ 
     private Tileset? _tileset;
     private ColorPalette? _palette;
 
+    private World? _world;
+    
     private void Initialize()
     {
         _tileset = new Tileset(AssetManager.LoadTexture("16x16-RogueYun-AgmEdit.png"), new Vector2(16, 16));
         _palette = ColorPalette.LoadFromJson("AfterglowTheme.json");
-        
-        systems.Add(new PlayerSystem());
-        systems.Add(new RenderingSystem(_tileset));
 
-        entities.Add(new Entity
-        {
+        _world = new World();
+
+        _world.AddSystems(
+            new PlayerSystem(),
+            new AISystem(),
+            new RenderingSystem(_tileset)
+        );
+
+        _world.CreateAndAddEntity(
             new Position { X = 20, Y = 20 },
-            new Renderable { Glyph = '@', ForegroundColor = _palette["White"] }
-        });
+            new Renderable { Glyph = '@', ForegroundColor = _palette["White"] },
+            new AIController { Type = AIType.Wandering }
+        );
         
-        entities.Add(new Entity
-        {
+        _world.CreateAndAddEntity(
             new Position { X = 15, Y = 20 },
             new Renderable { Glyph = '@', ForegroundColor = _palette["Yellow"] },
             new PlayerController()
-        });
+        );
     }
 
     public void Run()
@@ -57,10 +60,8 @@ public class Engine
         {
             BeginDrawing();
             ClearBackground(_palette!["Background"]);
-            
-            foreach (var system in systems)
-                foreach (var entity in entities)
-                    system.Process(entity);
+
+            _world!.Run();
             
             EndDrawing();
             
