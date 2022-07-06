@@ -1,16 +1,20 @@
 ﻿using Raylib_cs;
+using Roguelike.ECS.Components;
 using static Raylib_cs.Raylib;
 
-namespace Roguelike.Components;
+namespace Roguelike.ECS.Systems;
 
-public class PlayerControlled : IComponent
+public class PlayerSystem : ISystem
 {
-    private const float PlayerWalkSpeed = 4f; // in tiles per second
-    private double _playerLastMove;
-    
-    public void Process(Entity entity)
+    public void Process(Entity e)
     {
-        if (!(_playerLastMove + (1f / PlayerWalkSpeed) < GetTime()))
+        var position = e.Get<Position>();
+        var playerController = e.Get<PlayerController>();
+        
+        if (position == null || playerController == null)
+            return;
+        
+        if (!(playerController.LastMoveTime + (1f / playerController.Speed) < GetTime()))
             return;
         
         var dx = 0;
@@ -27,8 +31,10 @@ public class PlayerControlled : IComponent
 
         if (dx == 0 && dy == 0)
             return;
-        
-        entity.Move(dx, dy);
-        _playerLastMove = GetTime();
+
+        position.X += dx;
+        position.Y += dy;
+
+        playerController.LastMoveTime = GetTime();
     }
 }

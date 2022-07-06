@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using Raylib_cs;
 using Roguelike.Extensions;
 
-namespace Roguelike.Utility;
+namespace Roguelike.Utilities;
 
 //#pragma warning disable IL2026
 

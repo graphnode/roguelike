@@ -1,52 +1,44 @@
 ﻿using System.Numerics;
 using System.Reflection;
 using Raylib_cs;
-using Roguelike.Components;
-using Roguelike.Utility;
-
+using Roguelike.ECS;
+using Roguelike.ECS.Components;
+using Roguelike.ECS.Systems;
+using Roguelike.Utilities;
 using static Raylib_cs.Raylib;
 
 namespace Roguelike;
 
 public class Engine
 {
-    private static Vector2 TileSize => new(16, 16);
-    
+    private readonly List<ISystem> systems = new();
     private readonly HashSet<Entity> entities = new();
+    
     private Tileset? _tileset;
     private ColorPalette? _palette;
 
     private void Initialize()
     {
-        _tileset = new Tileset(AssetManager.LoadTexture("16x16-RogueYun-AgmEdit.png"), TileSize);
+        _tileset = new Tileset(AssetManager.LoadTexture("16x16-RogueYun-AgmEdit.png"), new Vector2(16, 16));
         _palette = ColorPalette.LoadFromJson("AfterglowTheme.json");
         
-        entities.Add(new Entity(20, 20, '@', _palette["White"]));
-        entities.Add(new Entity(15, 20, '@', _palette["Yellow"], new [] { new PlayerControlled() }));
-    }
-    
-    private void Update()
-    {
-        foreach (var entity in entities)
-            entity.Update();
+        systems.Add(new PlayerSystem());
+        systems.Add(new RenderingSystem(_tileset));
 
-        if (IsKeyPressed(KeyboardKey.KEY_ESCAPE))
-            Environment.Exit(0);
-    }
-
-    private void Draw()
-    {
-        foreach (var entity in entities)
-            DrawTextureRec(_tileset!.Texture,  _tileset.GetRect(entity.Glyph), new Vector2(entity.X, entity.Y) * TileSize, entity.Color);
+        entities.Add(new Entity
+        {
+            new Position { X = 20, Y = 20 },
+            new Renderable { Glyph = '@', ForegroundColor = _palette["White"] }
+        });
+        
+        entities.Add(new Entity
+        {
+            new Position { X = 15, Y = 20 },
+            new Renderable { Glyph = '@', ForegroundColor = _palette["Yellow"] },
+            new PlayerController()
+        });
     }
 
-    private string GenerateTitle()
-    {
-        const string baseTitle = "Roguelike";
-        var version = Assembly.GetEntryAssembly()?.GetName().Version;
-        return version == null ? baseTitle : $"{baseTitle} v{version.ToString(3)}";
-    }
-    
     public void Run()
     {
         var title = GenerateTitle();
@@ -63,12 +55,12 @@ public class Engine
         var running = true;
         while (running)
         {
-            Update();
-            
             BeginDrawing();
             ClearBackground(_palette!["Background"]);
             
-            Draw();
+            foreach (var system in systems)
+                foreach (var entity in entities)
+                    system.Process(entity);
             
             EndDrawing();
             
@@ -76,5 +68,12 @@ public class Engine
         }
         
         CloseWindow();
+    }
+    
+    private static string GenerateTitle()
+    {
+        const string baseTitle = "Roguelike";
+        var version = Assembly.GetEntryAssembly()?.GetName().Version;
+        return version == null ? baseTitle : $"{baseTitle} v{version.ToString(3)}";
     }
 }

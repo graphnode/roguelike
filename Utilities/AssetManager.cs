@@ -1,6 +1,6 @@
 ﻿using Raylib_cs;
 
-namespace Roguelike.Utility;
+namespace Roguelike.Utilities;
 
 public static class AssetManager
 {

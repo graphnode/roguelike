@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Raylib_cs;
 
-namespace Roguelike;
+namespace Roguelike.Utilities;
 
 public class Tileset
 {
