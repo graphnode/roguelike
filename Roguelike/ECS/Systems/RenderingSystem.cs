@@ -6,7 +6,7 @@ namespace Roguelike.ECS.Systems;
 
 using static Raylib_cs.Raylib;
 
-public class RenderingSystem : System<Position, Renderable>
+public class RenderingSystem : EntityProcessorSystem<Position, Renderable>
 {
     private readonly Tileset tileset;
 
@@ -14,8 +14,8 @@ public class RenderingSystem : System<Position, Renderable>
     {
         this.tileset = tileset;
     }
-    
-    public override void Process(Entity e)
+
+    protected override void Process(Entity e)
     {
         var position = e.Get<Position>()!;
         var renderable = e.Get<Renderable>()!;

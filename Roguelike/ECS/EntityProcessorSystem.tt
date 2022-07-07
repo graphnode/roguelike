@@ -1,0 +1,45 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+namespace Roguelike.ECS;
+
+<#
+    const int genericParametersCount = 4;
+
+    for (var i = 1; i < genericParametersCount + 1; i++)
+    {
+#>
+public abstract class EntityProcessorSystem<<#= GetNames(i) #>> : ISystem 
+<#= GetConstraints(i) #>
+{
+    public virtual void ProcessEntities(IEnumerable<Entity> entities)
+    {
+        foreach (var entity in entities)
+            if (<#= GetConditions(i) #>)
+                Process(entity);
+    }
+
+    protected abstract void Process(Entity e);
+}
+
+<#
+    }
+#>
+<#+
+    private string GetNames(int count)
+    {
+        return string.Join(", ", Enumerable.Range(0, count).Select(i => $"T{i}"));
+    }
+    
+    private string GetConstraints(int count)
+    {
+        return string.Join("\r\n", Enumerable.Range(0, count).Select(i => $"    where T{i} : IComponent"));
+    }
+
+    private string GetConditions(int count, string variable = "entity")
+    {
+        return string.Join(" && ", Enumerable.Range(0, count).Select(i => $"{variable}.Has<T{i}>()"));
+    }
+#>

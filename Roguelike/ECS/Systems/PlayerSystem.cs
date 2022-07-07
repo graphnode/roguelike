@@ -4,9 +4,9 @@ using static Raylib_cs.Raylib;
 
 namespace Roguelike.ECS.Systems;
 
-public class PlayerSystem : System<Position, PlayerController>
+public class PlayerSystem : EntityProcessorSystem<Position, PlayerController>
 {
-    public override void Process(Entity e)
+    protected override void Process(Entity e)
     {
         var playerController = e.Get<PlayerController>()!;
         

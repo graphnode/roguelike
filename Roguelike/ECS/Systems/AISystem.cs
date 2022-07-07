@@ -3,9 +3,9 @@ using static Raylib_cs.Raylib;
 
 namespace Roguelike.ECS.Systems;
 
-public class AISystem : System<Position, AIController>
+public class AISystem : EntityProcessorSystem<Position, AIController>
 {
-    public override void Process(Entity e)
+    protected override void Process(Entity e)
     {
         var aiController = e.Get<AIController>()!;
 

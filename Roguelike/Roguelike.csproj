@@ -6,7 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Configurations>Release;Debug</Configurations>
-        <Platforms>x64</Platforms>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
@@ -14,6 +13,7 @@
         <Company>Graphnode</Company>
         <NeutralLanguage>en-US</NeutralLanguage>
         <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+        <PlatformTarget>AnyCPU</PlatformTarget>
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(BuildType)' == 'publish'">
@@ -39,9 +39,21 @@
       <None Remove="README.md" />
       <None Remove="LICENSES\**" />
       <None Remove="publish\**" />
+      <None Update="ECS\EntityProcessorSystem.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>EntityProcessorSystem.cs</LastGenOutput>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Raylib-cs" Version="4.0.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="ECS\EntityProcessorSystem.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>EntityProcessorSystem.tt</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>

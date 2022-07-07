@@ -1,4 +1,6 @@
-﻿namespace Roguelike;
+﻿using System.Linq;
+
+namespace Roguelike;
 
 internal static class Program
 {
